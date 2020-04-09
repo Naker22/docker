@@ -1,0 +1,38 @@
+version: '3.3'
+services:
+        lamp:
+                image: lamp1.1
+                build: .
+                restart: always
+                ports:
+                        - "5000:5000"
+                volumes:
+                        - .:/code
+                environment:
+                        FLASK_ENV: development
+        wordpress:
+                image: wordpress:latest
+                restart: always
+                links:
+                      - db:mysql
+                      - lamp:lamp1.1
+                ports:
+                        - "80:80"
+                working_dir: /var/www/html
+                volumes:
+                        - "/opt/wp-content:/var/www/html/wp-content"
+                environment:
+                        WORDPRESS_DB_HOST: db:3306
+                        WORDPRESS_DB_USER: wordpress
+                        WORDPRESS_DB_PASSWORD: wordpress
+                        WORDPRESS_DB_NAME: wordpress
+        db:
+                image: mysql:5.7
+                restart: always
+                volumes:
+                        - "/opt/mysql:/var/lib/mysql"
+                environment:
+                        MYSQL_ROOT_PASSWORD: Agelis@06
+                        MYSQL_DATABASE: wordpress
+                        MYSQL_USER: wordpress
+                        MYSQL_PASSWORD: wordpress
